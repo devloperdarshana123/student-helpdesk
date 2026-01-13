@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
-import { connectDB } from "../mongodb";
+import  connectDB  from "../mongodb";
 import User from "../../models/User";
 
 
