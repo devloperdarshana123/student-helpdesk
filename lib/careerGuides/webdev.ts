@@ -148,8 +148,7 @@ Build:
 ✔ E-commerce UI
 
 🔴 Phase 4 — Next.js (Production React)
-
-👉 Tum already use kar rahi ho 😄
+👉 React ka advanced version
 
 Learn:
 
