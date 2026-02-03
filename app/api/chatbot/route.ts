@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { staticChatData } from "@/lib/staticChatData";
 import { tutorials } from "@/lib/tutorials";
+import { careerGuides } from "@/lib/careerGuides";
 
 export const runtime = "nodejs";
 
@@ -15,7 +16,7 @@ export async function POST(req: Request) {
     const lowerMsg = message.toLowerCase();
 
     // ===============================
-    // 1️⃣ FULL TUTORIAL CHECK (HIGHEST PRIORITY)
+    // 1️⃣ FULL TUTORIAL CHECK (LONG LESSONS)
     // ===============================
     const tutorialMatch = tutorials.find(t =>
       t.triggers.some(trigger => lowerMsg.includes(trigger))
@@ -28,7 +29,20 @@ export async function POST(req: Request) {
     }
 
     // ===============================
-    // 2️⃣ NORMAL CHAT (STATIC Q&A)
+    // 2️⃣ CAREER GUIDES (ROADMAPS)
+    // ===============================
+    const careerMatch = careerGuides.find(g =>
+      g.triggers.some(trigger => lowerMsg.includes(trigger))
+    );
+
+    if (careerMatch) {
+      return NextResponse.json({
+        reply: careerMatch.content,
+      });
+    }
+
+    // ===============================
+    // 3️⃣ NORMAL STATIC CHAT (SHORT ANSWERS)
     // ===============================
     for (const item of staticChatData) {
       if (item.patterns.some(p => lowerMsg.includes(p))) {
@@ -39,7 +53,7 @@ export async function POST(req: Request) {
     }
 
     // ===============================
-    // 3️⃣ SILENT GPT-LIKE FALLBACK
+    // 4️⃣ GPT-LIKE FALLBACK (SMART DEFAULT)
     // ===============================
     const unknown = staticChatData.find(i => i.intent === "unknown");
 
@@ -49,7 +63,7 @@ export async function POST(req: Request) {
 
   } catch (error) {
     // ===============================
-    // 4️⃣ SAFETY NET (NEVER EXPOSE ERRORS)
+    // 5️⃣ SAFETY NET
     // ===============================
     return NextResponse.json({
       reply:
