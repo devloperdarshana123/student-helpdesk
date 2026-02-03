@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
     if (tutorialMatch) {
       return NextResponse.json({
-        answer: tutorialMatch.content,
+        reply: tutorialMatch.content,
       });
     }
 
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     for (const item of staticChatData) {
       if (item.patterns.some(p => lowerMsg.includes(p))) {
         return NextResponse.json({
-          answer: getRandom(item.responses),
+          reply: getRandom(item.responses),
         });
       }
     }
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     const unknown = staticChatData.find(i => i.intent === "unknown");
 
     return NextResponse.json({
-      answer: getRandom(unknown!.responses),
+      reply: getRandom(unknown!.responses),
     });
 
   } catch (error) {
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     // 4️⃣ SAFETY NET (NEVER EXPOSE ERRORS)
     // ===============================
     return NextResponse.json({
-      answer:
+      reply:
         "Let’s think about this step by step and understand the core idea behind it.",
     });
   }
