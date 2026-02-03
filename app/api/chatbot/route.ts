@@ -1,37 +1,59 @@
+import { NextResponse } from "next/server";
+import { staticChatData } from "@/lib/staticChatData";
+import { tutorials } from "@/lib/tutorials";
+
 export const runtime = "nodejs";
 
-import { NextResponse } from "next/server";
-import OpenAI from "openai";
+// helper: random reply (GPT feel)
+function getRandom(arr: string[]) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 
 export async function POST(req: Request) {
   try {
     const { message } = await req.json();
+    const lowerMsg = message.toLowerCase();
 
-    if (!process.env.OPENAI_API_KEY) {
-      throw new Error("OPENAI_API_KEY is missing");
+    // ===============================
+    // 1️⃣ FULL TUTORIAL CHECK (HIGHEST PRIORITY)
+    // ===============================
+    const tutorialMatch = tutorials.find(t =>
+      t.triggers.some(trigger => lowerMsg.includes(trigger))
+    );
+
+    if (tutorialMatch) {
+      return NextResponse.json({
+        answer: tutorialMatch.content,
+      });
     }
 
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+    // ===============================
+    // 2️⃣ NORMAL CHAT (STATIC Q&A)
+    // ===============================
+    for (const item of staticChatData) {
+      if (item.patterns.some(p => lowerMsg.includes(p))) {
+        return NextResponse.json({
+          answer: getRandom(item.responses),
+        });
+      }
+    }
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: "You are a helpful student assistant." },
-        { role: "user", content: message },
-      ],
-    });
+    // ===============================
+    // 3️⃣ SILENT GPT-LIKE FALLBACK
+    // ===============================
+    const unknown = staticChatData.find(i => i.intent === "unknown");
 
     return NextResponse.json({
-      reply: response.choices[0].message.content,
+      answer: getRandom(unknown!.responses),
     });
-  } catch (error: any) {
-    console.error("CHATBOT ERROR:", error);
 
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
+  } catch (error) {
+    // ===============================
+    // 4️⃣ SAFETY NET (NEVER EXPOSE ERRORS)
+    // ===============================
+    return NextResponse.json({
+      answer:
+        "Let’s think about this step by step and understand the core idea behind it.",
+    });
   }
 }

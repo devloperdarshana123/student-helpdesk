@@ -60,7 +60,7 @@ export default function ChatPage() {
 
       const botMessage: Message = {
         role: "bot",
-        text: data.reply || "No response received.",
+       text: data.answer || "🤖 I’m here to help! Try asking about MongoDB, React, or Next.js.",
         time: getTime(),
       };
 
