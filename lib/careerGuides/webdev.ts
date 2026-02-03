@@ -1,11 +1,16 @@
 export const webDevGuide = {
-  triggers: [
-    "web dev",
-    "web developer",
-    "frontend roadmap",
-    "backend roadmap",
-    "web development career"
-  ],
+ triggers: [
+  "web dev",
+  "web development",
+  "web development career",
+  "web developer",
+  "frontend",
+  "full stack",
+  "web dev roadmap",
+  "how to become web developer",
+  "career in web development"
+]
+,
   content: `
 🌐 Web Development Full Roadmap
 
